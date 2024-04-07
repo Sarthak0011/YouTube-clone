@@ -10,4 +10,11 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }))  // Parse incomin
 app.use(express.static("public"))   // Serves static files from public directory
 app.use(cookieParser())     // Server will be able to perform CRUD operations on client's browser
 
+
+//  import routes
+import userRouter from "./routes/user.routes.js"
+
+//  Routes declaration
+app.use("/api/v1/users", userRouter)
+
 export { app };
