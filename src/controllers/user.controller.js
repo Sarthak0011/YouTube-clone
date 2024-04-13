@@ -6,7 +6,6 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 
 const registerUser = asyncHandler(async (req, res) => {
     const { username, email, password, fullName } = req.body
-    // console.log("Email", email)
 
     //  check for empty fields
     if([username, email, password, fullName].some((field) => field?.trim() === "")){
@@ -14,7 +13,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     //  check if user already exists
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [{ username }, { email }]
     })
 
@@ -25,7 +24,13 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // get file paths from local server
     const avatarLocalPath = req.files?.avatar[0]?.path
-    const coverImageLocalPath = req.files?.coverImage[0]?.path
+    // const coverImageLocalPath = req.files?.coverImage[0]?.path
+
+    let coverImageLocalPath;
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length){
+        coverImageLocalPath = req.files.coverImage[0].path
+    }
+
 
     if(!avatarLocalPath){
         throw new ApiError(400, "Avatar file is required")
@@ -59,7 +64,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     //  return response if user is created
     return res.status(201).json(
-        new ApiError(201, createdUser, "User created successfully")
+        new ApiResponse(200, createdUser, "User created successfully")
     )
 })
 
