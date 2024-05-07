@@ -87,7 +87,7 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
     const user = await User.findOne({
-        $and: [{ username }, { email }]
+        $or: [{ username }, { email }]
     })
 
     if(!user){
@@ -114,13 +114,15 @@ const loginUser = asyncHandler(async (req, res) => {
             .cookie("accessToken", accessToken, options)
             .cookie("refreshToken", refreshToken, options)
             .json(
-                200,
-                {
-                    user: loggedInUser,
-                    accessToken,
-                    refreshToken
-                },
-                "Login successfull"
+                new ApiResponse(
+                    200,
+                    {
+                        user: loggedInUser,
+                        accessToken,
+                        refreshToken
+                    },
+                    "Login successfull"
+                )
             )
 
 })
